@@ -14,6 +14,8 @@ def all_possible_subsets(schema):
     for i in all_possible:
         i = list(i)
         str_all_possible.append("".join(i))
+    print len(str_all_possible)
+    print str_all_possible
     return str_all_possible
 
 def calc_closure(subset, fds, schema):
@@ -73,7 +75,7 @@ def sort_by_length(x, y):
         return -1
 
 
-if __name__ == "__main__":
+def main():
     schema = "ABCDE"
     fds = [("AB", "D"),
            ("D", "C"),
@@ -87,4 +89,12 @@ if __name__ == "__main__":
     keys = [ superkey for superkey in superkeys if is_key(superkey, superkeys) ]
     keys.sort()
     print "Keys:     ", keys
+    for key in keys:
+        if key in superkeys:
+            superkeys.remove(key)
+        
+    return superkeys, keys
 
+
+if __name__ == "__main__":
+    main()
