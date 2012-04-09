@@ -8,13 +8,25 @@ def draw(nodelist, superkeys, keys):
     for node in nodelist:
         DG.add_node(node)
     DG.add_edge("A", "ABC")
-    print dir(DG)
 
     #nodelist.sort(cmp=sort_by_length)
     lengths = set([ len(node) for node in nodelist ])
     d = {}
     for length in lengths:
         d[length] = [ node for node in nodelist if len(node) == length ]
+
+    lengths = list(lengths)
+    lengths.sort()
+    lengths.remove(lengths[-1])
+    print lengths
+    important_edges = []
+    for length in lengths:
+        for node1 in d[length]:
+            for node2 in d[length+1]:
+                if set(node1).issubset(set(node2)):
+                    DG.add_edge(node1, node2)
+                    if node1 in keys or node1 in superkeys:
+                        important_edges.append((node1, node2))
 
     max_length = max(d.iterkeys())
     max_nodelist_length = max([ len(nodelist) for nodelist in d.itervalues() ])
@@ -35,19 +47,23 @@ def draw(nodelist, superkeys, keys):
                 other_pos[node] = [d[i].index(node) + offset, i]
 
     global_draw_args = {
-                        "alpha": 0.25,
-                        "node_shape": "s",
-                        "edgecolors": "none",
-                        "node_size": 2000
+#                        "alpha": 0.25,
+                        "node_shape": ".",
+                        #"edgecolors": "none",
+                        #"node_size": 2000
                        }
     plt.figure(1, [11, 8.5])
 
+    nx.draw_networkx_edges(DG, pos=master_pos, arrows=None, edge_color="#AAAAAA", style="dotted")
+    nx.draw_networkx_edges(DG, edgelist=important_edges, pos=master_pos, arrows=None, edge_color="#AAAAAA")
     dn.draw_networkx_nodes(DG, pos=superkey_pos, node_color="#0000FF", nodelist=superkeys, label="Superkey", **global_draw_args)
     dn.draw_networkx_nodes(DG, pos=key_pos, node_color="#FF0000", nodelist=keys, label="Key", **global_draw_args)
-    dn.draw_networkx_nodes(DG, pos=other_pos, node_color="#AAAAAA", nodelist=list(other_pos.iterkeys()), label="Other", **global_draw_args)
-    nx.draw_networkx_labels(DG, pos=master_pos)
+    dn.draw_networkx_nodes(DG, pos=other_pos, node_color="#FFFFFF", nodelist=list(other_pos.iterkeys()), label="Other", **global_draw_args)
+    dn.draw_networkx_labels(DG, pos=master_pos, horizontalalignment="center", verticalalignment="top")
 
     plt.legend(scatterpoints=1)
+    plt.yticks([])
+    plt.xticks([])
     plt.show()
 
 
