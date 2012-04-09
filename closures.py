@@ -1,4 +1,5 @@
 import itertools
+import hasse_diagram
 
 def all_possible_subsets(schema):
     """
@@ -84,16 +85,17 @@ def main():
     subsets = all_possible_subsets(schema)
     superkeys = [ subset for subset in subsets if is_superkey(subset, fds, schema) ]
     superkeys.sort(cmp=sort_by_length)
-    print "Superkeys:", superkeys
 
     keys = [ superkey for superkey in superkeys if is_key(superkey, superkeys) ]
     keys.sort()
-    print "Keys:     ", keys
     for key in keys:
         if key in superkeys:
             superkeys.remove(key)
+
+    print "Superkeys:", superkeys
+    print "Keys:     ", keys
         
-    return superkeys, keys
+    hasse_diagram.draw(subsets, superkeys, keys, fds)
 
 
 if __name__ == "__main__":

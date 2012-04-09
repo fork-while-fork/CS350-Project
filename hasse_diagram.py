@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import draw_nodes as dn
 import closures as c
 
-def draw(nodelist, superkeys, keys):
+def draw(nodelist, superkeys, keys, fds):
     DG = nx.DiGraph()
     for node in nodelist:
         DG.add_node(node)
@@ -46,12 +46,8 @@ def draw(nodelist, superkeys, keys):
             else:
                 other_pos[node] = [d[i].index(node) + offset, i]
 
-    global_draw_args = {
-#                        "alpha": 0.25,
-                        "node_shape": ".",
-                        #"edgecolors": "none",
-                        #"node_size": 2000
-                       }
+    global_draw_args = { "node_shape": "." }
+
     plt.figure(1, [11, 8.5])
 
     nx.draw_networkx_edges(DG, pos=master_pos, arrows=None, edge_color="#AAAAAA", style="dotted")
@@ -61,12 +57,12 @@ def draw(nodelist, superkeys, keys):
     dn.draw_networkx_nodes(DG, pos=other_pos, node_color="#FFFFFF", nodelist=list(other_pos.iterkeys()), label="Other", **global_draw_args)
     dn.draw_networkx_labels(DG, pos=master_pos, horizontalalignment="center", verticalalignment="top")
 
+    xmin, xmax = plt.xlim()
+    ymin, ymax = plt.ylim()
+    plt.text(xmin + 0.1, ymax - 0.15, r"Functional Dependencies", weight="bold")
+    for ypos, fd in enumerate(fds):
+        plt.text(xmin + 0.1, ymax - 0.15*(ypos+2), r"%s$\rightarrow$%s" % (fd[0], fd[1]))
     plt.legend(scatterpoints=1)
     plt.yticks([])
     plt.xticks([])
     plt.show()
-
-
-if __name__ == "__main__":
-    superkeys, keys = c.main()
-    draw(c.all_possible_subsets("ABCDE"), superkeys, keys)
