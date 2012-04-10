@@ -7,7 +7,6 @@ def draw(nodelist, superkeys, keys, fds):
     DG = nx.DiGraph()
     for node in nodelist:
         DG.add_node(node)
-    DG.add_edge("A", "ABC")
 
     #nodelist.sort(cmp=sort_by_length)
     lengths = set([ len(node) for node in nodelist ])
@@ -18,7 +17,6 @@ def draw(nodelist, superkeys, keys, fds):
     lengths = list(lengths)
     lengths.sort()
     lengths.remove(lengths[-1])
-    print lengths
     important_edges = []
     for length in lengths:
         for node1 in d[length]:
